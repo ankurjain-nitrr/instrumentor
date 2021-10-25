@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 
 @Slf4j
@@ -48,7 +49,7 @@ public class AppMetricsAdvice {
                 .register();
     }
 
-    @Around("@annotation(com.ankur.instrumentor.TrackMetrics) && execution(* *(..))")
+    @Around("trackMetricAnnotation() && allExecutedMethods()")
     public Object trackMetrics(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         log.debug("TrackMetrics annotation advice called for method {}", proceedingJoinPoint.getSignature());
         MethodSignature signature = (MethodSignature) proceedingJoinPoint.getSignature();
@@ -59,6 +60,12 @@ public class AppMetricsAdvice {
         final String filterName = DEFAULT.equals(trackMetrics.filterName()) ? names[1] : trackMetrics.filterName();
         return metricsHelper(proceedingJoinPoint, category, filterName);
     }
+
+    @Pointcut("execution(* *(..))")
+    public void allExecutedMethods() {}
+
+    @Pointcut("@annotation(com.ankur.instrumentor.TrackMetrics)")
+    public void trackMetricAnnotation() {}
 
     private Object metricsHelper(ProceedingJoinPoint proceedingJoinPoint, String category, String filterName)
             throws Throwable {
