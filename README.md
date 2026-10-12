@@ -77,11 +77,11 @@ Build the jar from this repo with `./gradlew build`; it lands in `build/libs`.
 
 - Only methods annotated with `@TrackMetrics` are measured.
 - Metrics are registered on the default Prometheus registry when `AppMetricsAdvice` is first loaded.
-- Targets Java 8.
+- Requires Java 21 or newer at runtime.
 
 ## Development
 
-Building needs JDK 17 or newer (Gradle 9); JDK 21 is what CI uses. The published classes are compiled with `--release 8`, and the build runs `ajc` over them so the aspect works on a consumer's `-aspectpath`.
+Building needs JDK 21. The build uses a Gradle Java 21 toolchain, so Gradle itself can run on JDK 17 or newer as long as a JDK 21 is installed. The build runs `ajc` over the compiled classes so the aspect works on a consumer's `-aspectpath`.
 
 ```sh
 ./gradlew build

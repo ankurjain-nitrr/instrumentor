@@ -7,6 +7,12 @@ plugins {
 group = 'com.ankur'
 version = '0.0.1-SNAPSHOT'
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -33,11 +39,6 @@ dependencies {
     }
 }
 
-tasks.named('compileJava', JavaCompile) {
-    options.release = 8
-    // JDK 21 warns that release 8 is deprecated; that is the point here.
-    options.compilerArgs << '-Xlint:-options'
-}
 
 interface InjectedExecOps {
     @Inject
@@ -56,14 +57,9 @@ tasks.named('compileJava', JavaCompile) { task ->
         execOps.javaexec {
             classpath = ajcClasspath
             mainClass = 'org.aspectj.tools.ajc.Main'
-            args '-8', '-inpath', classesDir, '-d', classesDir, '-classpath', weaveClasspath.asPath
+            args '-21', '-inpath', classesDir, '-d', classesDir, '-classpath', weaveClasspath.asPath
         }
     }
-}
-
-// The published jar targets Java 8; tests only need what JUnit 6 and Mockito 5 require.
-tasks.named('compileTestJava', JavaCompile) {
-    options.release = 17
 }
 
 tasks.named('test', Test) {
