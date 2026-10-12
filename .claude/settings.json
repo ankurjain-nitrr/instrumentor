@@ -3,7 +3,7 @@
     "ankurjain-skills": { "source": { "source": "github", "repo": "ankurjain-nitrr/skills" } }
   },
   "enabledPlugins": {
-    "readme-check@ankurjain-skills": true,
+    "devloop@ankurjain-skills": true,
     "update-stack@ankurjain-skills": true
   }
 }
