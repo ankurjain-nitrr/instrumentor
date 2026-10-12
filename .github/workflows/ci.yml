@@ -47,3 +47,13 @@ jobs:
           path: |
             build/libs/*.jar
             sample/build/libs/*.jar
+
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # Builds the sample image to catch Dockerfile breakage. Nothing is pushed.
+      - name: Build sample image
+        run: docker build -t instrumentor-sample .

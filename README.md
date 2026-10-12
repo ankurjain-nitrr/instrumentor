@@ -95,6 +95,19 @@ events_counter_total{category="Orders",filter_name="getOrder",status="SUCCESS",e
 latency_histogram_count{execution_time="getOrder",} 2.0
 ```
 
+### Run it in Docker
+
+The `Dockerfile` builds the sample (and the library) with Gradle on a JDK 21 image, then runs it on an Eclipse Temurin 21 JRE as a non-root user. You only need Docker; no local JDK.
+
+```sh
+docker compose up --build
+# or
+docker build -t instrumentor-sample .
+docker run --rm -p 8080:8080 instrumentor-sample
+```
+
+Then use the same `curl` commands as above.
+
 Spring Boot Actuator's `/actuator/prometheus` won't show these metrics. Micrometer uses a different registry from the `simpleclient` default registry this library writes to, so the sample serves that registry itself in `MetricsController`.
 
 ## Notes
