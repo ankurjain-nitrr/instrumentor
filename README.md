@@ -108,6 +108,8 @@ docker run --rm -p 8080:8080 instrumentor-sample
 
 Then use the same `curl` commands as above.
 
+`scripts/docker-smoke-test.sh` starts a container from the image, checks it runs on Java 21, makes tracked calls, and fails unless `/metrics` reports them. CI runs it on every push and pull request.
+
 Spring Boot Actuator's `/actuator/prometheus` won't show these metrics. Micrometer uses a different registry from the `simpleclient` default registry this library writes to, so the sample serves that registry itself in `MetricsController`.
 
 ## Notes
@@ -124,6 +126,6 @@ Building needs JDK 21. The build uses a Gradle Java 21 toolchain, so Gradle itse
 ./gradlew build
 ```
 
-This compiles, runs the unit tests in `src/test` (JUnit 6 and Mockito) and the sample's end-to-end test, and writes the jar to `build/libs`. Test reports go to `build/reports/tests/test`.
+This compiles, runs the unit tests in `src/test` (JUnit 6 and Mockito) and the sample's tests, and writes the jar to `build/libs`. The sample's `OrderServiceWeavingTest` calls the service without Spring, so it fails if the advice isn't woven in at compile time. Test reports go to `build/reports/tests/test`.
 
 CI (`.github/workflows/ci.yml`) runs the same build on every push and pull request to `main` and uploads the reports and jars as workflow artifacts. It does not publish anything.

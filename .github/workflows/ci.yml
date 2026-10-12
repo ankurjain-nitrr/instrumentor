@@ -54,6 +54,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # Builds the sample image to catch Dockerfile breakage. Nothing is pushed.
+      # Builds the sample image and runs it. Nothing is pushed.
       - name: Build sample image
         run: docker build -t instrumentor-sample .
+
+      - name: Smoke test the container
+        run: scripts/docker-smoke-test.sh instrumentor-sample
