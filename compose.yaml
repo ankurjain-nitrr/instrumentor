@@ -1,0 +1,6 @@
+services:
+  sample:
+    build: .
+    image: instrumentor-sample
+    ports:
+      - "8080:8080"
