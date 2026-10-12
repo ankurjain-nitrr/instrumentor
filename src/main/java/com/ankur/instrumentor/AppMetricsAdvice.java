@@ -2,16 +2,18 @@ package com.ankur.instrumentor;
 
 import io.prometheus.client.Counter;
 import io.prometheus.client.Histogram;
-import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
 @Aspect
 public class AppMetricsAdvice {
+
+    private static final Logger log = LoggerFactory.getLogger(AppMetricsAdvice.class);
 
     public static final String NONE = "None";
     public static final String DEFAULT = "default";
