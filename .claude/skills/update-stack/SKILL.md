@@ -8,17 +8,21 @@ description: Update every pinned version in the instrumentor repo to its latest 
 Bring every pinned version in this repo up to its latest stable release without changing
 behavior: metric names, labels and `@TrackMetrics` defaults stay exactly as they are.
 
-## 1. See what is outdated
+## 1. Find what is outdated
 
-From the repository root:
+Read the current versions from the files in section 2, then look up the latest stable release
+of each. Stable means no alpha, beta, RC, milestone, snapshot or preview builds; metadata lists
+are not always sorted, so compare versions rather than taking the last entry.
 
-```sh
-python3 .claude/skills/update-stack/scripts/check_versions.py
-```
+| What | Where to look |
+|---|---|
+| Maven dependencies | `https://repo1.maven.org/maven2/<group path>/<artifact>/maven-metadata.xml` (e.g. `org/aspectj/aspectjrt`) |
+| Gradle plugins | `https://plugins.gradle.org/m2/<id path>/<id>.gradle.plugin/maven-metadata.xml` (e.g. `org/springframework/boot/org.springframework.boot.gradle.plugin`) |
+| Gradle | `https://services.gradle.org/versions/current` (version, distribution and wrapper checksums) |
+| GitHub Actions | `https://api.github.com/repos/<owner>/<repo>/releases/latest` |
+| Java and Temurin images | `https://api.adoptium.net/v3/info/available_releases` (`most_recent_lts`) and Docker Hub tags for `eclipse-temurin` |
 
-It is read-only. It lists every pinned version with its file and line, the latest stable
-release, and marks differences with `*`. Stable means no alpha, beta, RC, milestone,
-snapshot or preview builds. Tell the user what will change before editing.
+Tell the user what will change, old and new version for each, before editing.
 
 ## 2. Where versions live
 
