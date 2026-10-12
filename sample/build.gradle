@@ -1,0 +1,36 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.1.1'
+    // Weaves AppMetricsAdvice into this app's classes at compile time, as the README describes.
+    id 'io.freefair.aspectj.post-compile-weaving' version '9.8.0'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation platform(SpringBootPlugin.BOM_COORDINATES)
+
+    aspect project(':')
+    implementation project(':')
+    implementation 'org.aspectj:aspectjrt:1.9.25.1'
+    implementation 'io.prometheus:simpleclient:0.16.0'
+    implementation 'io.prometheus:simpleclient_common:0.16.0'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+}
