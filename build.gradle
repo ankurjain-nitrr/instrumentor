@@ -1,3 +1,5 @@
+import javax.inject.Inject
+
 plugins {
     id 'java'
 }
@@ -10,6 +12,8 @@ repositories {
 }
 
 configurations {
+    // Build-time only: runs ajc. Never on the compile or runtime classpath.
+    ajc
     mockitoAgent
 }
 
@@ -17,6 +21,8 @@ dependencies {
     implementation 'org.aspectj:aspectjrt:1.9.25.1'
     implementation 'io.prometheus:simpleclient:0.16.0'
     implementation 'org.slf4j:slf4j-api:2.0.20'
+
+    ajc 'org.aspectj:aspectjtools:1.9.25.1'
 
     testImplementation platform('org.junit:junit-bom:6.1.3')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -31,6 +37,28 @@ tasks.named('compileJava', JavaCompile) {
     options.release = 8
     // JDK 21 warns that release 8 is deprecated; that is the point here.
     options.compilerArgs << '-Xlint:-options'
+}
+
+interface InjectedExecOps {
+    @Inject
+    ExecOperations getExecOps()
+}
+
+// Post-compile weaving: run ajc over the javac output in place so AppMetricsAdvice gets the
+// aspectOf()/hasAspect() methods that consumers weaving with -aspectpath call at runtime.
+tasks.named('compileJava', JavaCompile) { task ->
+    def execOps = objects.newInstance(InjectedExecOps).execOps
+    def ajcClasspath = configurations.ajc
+    def weaveClasspath = sourceSets.main.compileClasspath
+    inputs.files(ajcClasspath).withPropertyName('ajcClasspath').withNormalizer(ClasspathNormalizer)
+    doLast {
+        def classesDir = task.destinationDirectory.get().asFile.path
+        execOps.javaexec {
+            classpath = ajcClasspath
+            mainClass = 'org.aspectj.tools.ajc.Main'
+            args '-8', '-inpath', classesDir, '-d', classesDir, '-classpath', weaveClasspath.asPath
+        }
+    }
 }
 
 // The published jar targets Java 8; tests only need what JUnit 6 and Mockito 5 require.
