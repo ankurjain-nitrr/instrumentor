@@ -35,7 +35,7 @@ Keep each version identical everywhere it appears.
 | Spring Boot plugin, freefair plugin, aspectjrt, simpleclient, simpleclient_common | `sample/build.gradle` |
 | Consumer snippet (freefair, aspectjrt, simpleclient, slf4j-api) | `README.md` Setup section |
 | GitHub Actions | `.github/workflows/ci.yml` (major tags such as `@v7`) |
-| Java 21 | toolchains in both build files, `ci.yml` `java-version`, `Dockerfile` base images, `scripts/docker-smoke-test.sh`, README |
+| Java | toolchains in both build files, `ci.yml` `java-version`, `Dockerfile` base images, `scripts/docker-smoke-test.sh`, README |
 
 Dependencies the Spring Boot BOM manages (Spring, Tomcat, Jackson, the sample's JUnit and
 Mockito) move with the Spring Boot version; don't pin them.
@@ -46,8 +46,6 @@ Mockito) move with the Spring Boot version; don't pin them.
   artifact. Its successor, `io.prometheus:prometheus-metrics-*` 1.x, has a different API (no
   `CollectorRegistry`), so moving to it changes behavior for consumers. Don't do it unless the user
   asks for that migration explicitly.
-- **Java:** the project targets Java 21 by the user's choice. If the checker shows a newer LTS,
-  report it and ask before changing the toolchain, CI, Docker images or smoke test.
 - **AspectJ:** keep `aspectjrt` and `aspectjtools` on the same version. The library build runs
   `ajc` from the `ajc` configuration after `compileJava`; without it the published aspect has no
   `aspectOf()`, and consumers weaving with `-aspectpath` fail with `NoSuchMethodError`.
@@ -71,12 +69,13 @@ Mockito) move with the Spring Boot version; don't pin them.
 
 ## 4. Verify
 
-Run all of these on JDK 21; each must pass before committing.
+Run all of these on the JDK the project targets; each must pass before committing.
 
 ```sh
 ./gradlew clean build                          # library tests + sample tests
 
-# Classes target Java 21 (major version 65) and the aspect was woven by ajc.
+# Classes target the toolchain's Java version (major version = Java version + 44) and the
+# aspect was woven by ajc.
 javap -v -cp build/classes/java/main com.ankur.instrumentor.AppMetricsAdvice | grep -E 'major version|aspectOf\(\)'
 
 docker build -t instrumentor-sample .
