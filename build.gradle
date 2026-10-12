@@ -9,14 +9,37 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    mockitoAgent
+}
+
 dependencies {
     implementation 'org.aspectj:aspectjrt:1.9.25.1'
     implementation 'io.prometheus:simpleclient:0.16.0'
     implementation 'org.slf4j:slf4j-api:2.0.20'
+
+    testImplementation platform('org.junit:junit-bom:6.1.3')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-core:5.24.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    mockitoAgent('org.mockito:mockito-core:5.24.0') {
+        transitive = false
+    }
 }
 
 tasks.named('compileJava', JavaCompile) {
     options.release = 8
     // JDK 21 warns that release 8 is deprecated; that is the point here.
     options.compilerArgs << '-Xlint:-options'
+}
+
+// The published jar targets Java 8; tests only need what JUnit 6 and Mockito 5 require.
+tasks.named('compileTestJava', JavaCompile) {
+    options.release = 17
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+    // Load Mockito's inline mock maker as an agent instead of self-attaching at runtime.
+    jvmArgs "-javaagent:${configurations.mockitoAgent.asPath}", "-Xshare:off"
 }
