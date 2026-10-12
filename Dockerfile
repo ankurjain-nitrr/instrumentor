@@ -1,11 +1,11 @@
 # syntax=docker/dockerfile:1
 
 # Builds the sample Spring Boot app (and the instrumentor library it weaves in) and runs it on a
-# Java 21 JRE. Build from the repository root:
+# Java 25 JRE. Build from the repository root:
 #   docker build -t instrumentor-sample .
 #   docker run --rm -p 8080:8080 instrumentor-sample
 
-FROM eclipse-temurin:21-jdk-noble AS build
+FROM eclipse-temurin:25-jdk-noble AS build
 WORKDIR /workspace
 COPY gradlew settings.gradle build.gradle ./
 COPY gradle gradle
@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/root/.gradle \
 RUN java -Djarmode=tools -jar sample/build/libs/sample.jar \
         extract --layers --launcher --destination extracted
 
-FROM eclipse-temurin:21-jre-noble
+FROM eclipse-temurin:25-jre-noble
 RUN useradd --system --no-create-home app
 WORKDIR /app
 COPY --from=build /workspace/extracted/dependencies/ ./

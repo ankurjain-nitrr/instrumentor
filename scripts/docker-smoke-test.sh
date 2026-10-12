@@ -30,7 +30,7 @@ curl -sf "$base/orders" >/dev/null || fail "app did not start on $base"
 
 java_version=$(docker exec "$name" java -version 2>&1 | grep ' version ' || true)
 echo "runtime: $java_version"
-[[ "$java_version" == *'version "21.'* ]] || fail "expected a Java 21 runtime"
+[[ "$java_version" == *'version "25.'* ]] || fail "expected a Java 25 runtime"
 
 curl -sf "$base/orders/1" >/dev/null || fail "GET /orders/1"
 code=$(curl -s -o /dev/null -w '%{http_code}' "$base/orders/99")
