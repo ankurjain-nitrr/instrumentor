@@ -97,7 +97,7 @@ latency_histogram_count{execution_time="getOrder",} 2.0
 
 ### Run it in Docker
 
-The `Dockerfile` builds the sample (and the library) with Gradle on a JDK 21 image, then runs it on an Eclipse Temurin 21 JRE as a non-root user. You only need Docker; no local JDK.
+The `Dockerfile` builds the sample (and the library) with Gradle on a JDK 25 image, then runs it on an Eclipse Temurin 25 JRE as a non-root user. You only need Docker; no local JDK.
 
 ```sh
 docker compose up --build
@@ -108,7 +108,7 @@ docker run --rm -p 8080:8080 instrumentor-sample
 
 Then use the same `curl` commands as above.
 
-`scripts/docker-smoke-test.sh` starts a container from the image, checks it runs on Java 21, makes tracked calls, and fails unless `/metrics` reports them. CI runs it on every push and pull request.
+`scripts/docker-smoke-test.sh` starts a container from the image, checks it runs on Java 25, makes tracked calls, and fails unless `/metrics` reports them. CI runs it on every push and pull request.
 
 Spring Boot Actuator's `/actuator/prometheus` won't show these metrics. Micrometer uses a different registry from the `simpleclient` default registry this library writes to, so the sample serves that registry itself in `MetricsController`.
 
@@ -116,11 +116,11 @@ Spring Boot Actuator's `/actuator/prometheus` won't show these metrics. Micromet
 
 - Only methods annotated with `@TrackMetrics` are measured.
 - Metrics are registered on the default Prometheus registry when `AppMetricsAdvice` is first loaded.
-- Requires Java 21 or newer at runtime.
+- Requires Java 25 or newer at runtime.
 
 ## Development
 
-Building needs JDK 21. The build uses a Gradle Java 21 toolchain, so Gradle itself can run on JDK 17 or newer as long as a JDK 21 is installed. The build runs `ajc` over the compiled classes so the aspect works on a consumer's `-aspectpath`.
+Building needs JDK 25. The build uses a Gradle Java 25 toolchain, so Gradle itself can run on JDK 17 or newer as long as a JDK 25 is installed. The build runs `ajc` over the compiled classes so the aspect works on a consumer's `-aspectpath`.
 
 ```sh
 ./gradlew build
