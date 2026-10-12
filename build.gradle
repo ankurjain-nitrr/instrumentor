@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -57,7 +57,7 @@ tasks.named('compileJava', JavaCompile) { task ->
         execOps.javaexec {
             classpath = ajcClasspath
             mainClass = 'org.aspectj.tools.ajc.Main'
-            args '-21', '-inpath', classesDir, '-d', classesDir, '-classpath', weaveClasspath.asPath
+            args '-25', '-inpath', classesDir, '-d', classesDir, '-classpath', weaveClasspath.asPath
         }
     }
 }
