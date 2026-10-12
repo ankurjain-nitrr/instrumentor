@@ -73,6 +73,30 @@ dependencies {
 
 Build the jar from this repo with `./gradlew build`; it lands in `build/libs`.
 
+## Sample application
+
+[`sample/`](sample) is a Spring Boot 4 app that uses the library the way the Setup section describes: the freefair plugin weaves `AppMetricsAdvice` in at compile time, and a `/metrics` endpoint serves the default Prometheus registry.
+
+```sh
+./gradlew :sample:bootRun
+
+curl localhost:8080/orders      # @TrackMetrics with defaults: OrderService / listOrders
+curl localhost:8080/orders/1    # @TrackMetrics(category = "Orders", filterName = "getOrder")
+curl localhost:8080/orders/7    # unknown id: recorded as a FAILURE, returns 404
+curl localhost:8080/metrics
+```
+
+After those calls, `/metrics` includes:
+
+```
+events_counter_total{category="OrderService",filter_name="listOrders",status="SUCCESS",exception="None",} 1.0
+events_counter_total{category="Orders",filter_name="getOrder",status="FAILURE",exception="java.util.NoSuchElementException",} 1.0
+events_counter_total{category="Orders",filter_name="getOrder",status="SUCCESS",exception="None",} 1.0
+latency_histogram_count{execution_time="getOrder",} 2.0
+```
+
+Spring Boot Actuator's `/actuator/prometheus` won't show these metrics. Micrometer uses a different registry from the `simpleclient` default registry this library writes to, so the sample serves that registry itself in `MetricsController`.
+
 ## Notes
 
 - Only methods annotated with `@TrackMetrics` are measured.
@@ -87,6 +111,6 @@ Building needs JDK 21. The build uses a Gradle Java 21 toolchain, so Gradle itse
 ./gradlew build
 ```
 
-This compiles, runs the unit tests in `src/test` (JUnit 6 and Mockito), and writes the jar to `build/libs`. Test reports go to `build/reports/tests/test`.
+This compiles, runs the unit tests in `src/test` (JUnit 6 and Mockito) and the sample's end-to-end test, and writes the jar to `build/libs`. Test reports go to `build/reports/tests/test`.
 
-CI (`.github/workflows/ci.yml`) runs the same build on every push and pull request to `main` and uploads the reports and jar as workflow artifacts. It does not publish anything.
+CI (`.github/workflows/ci.yml`) runs the same build on every push and pull request to `main` and uploads the reports and jars as workflow artifacts. It does not publish anything.

@@ -36,10 +36,14 @@ jobs:
           path: |
             build/reports
             build/test-results
+            sample/build/reports
+            sample/build/test-results
           if-no-files-found: ignore
 
       - name: Upload jars
         uses: actions/upload-artifact@v7
         with:
           name: jars
-          path: build/libs/*.jar
+          path: |
+            build/libs/*.jar
+            sample/build/libs/*.jar
