@@ -1,9 +1,10 @@
 {
   "extraKnownMarketplaces": {
-    "ankurjain-skills": { "source": { "source": "github", "repo": "ankurjain-nitrr/skills" } }
+    "ankurjain-skills": { "source": { "source": "github", "repo": "ankurjain-nitrr/skills" } },
+    "hoop": { "source": { "source": "github", "repo": "ankurjain-nitrr/hoop" } }
   },
   "enabledPlugins": {
-    "devloop@ankurjain-skills": true,
+    "devloop@hoop": true,
     "update-stack@ankurjain-skills": true
   }
 }
