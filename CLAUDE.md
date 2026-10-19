@@ -2,7 +2,7 @@
 
 ## Before every push
 
-Run the `/devloop:readme-check` skill (from `devloop@ankurjain-skills`, enabled in `.claude/settings.json`).
+Run the `/devloop:readme-check` skill (from `devloop@hoop`, enabled in `.claude/settings.json`).
 README claims to keep true here:
 
 - Versions in the Setup snippet match `build.gradle` and `sample/build.gradle`.
